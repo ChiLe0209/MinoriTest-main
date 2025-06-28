@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minori - Cửa hàng thể thao</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="icon" type="image/png" href="/images/icon.jpg">
+</head>
+<body>
+
+    <header class="header">
+        <nav class="nav container">
+            <a href="index.html" class="logo">
+                <img src="/images/41616930_transparent-1-1024x382.png" alt="Minori Logo">
+            </a>
+
+            <div class="header-right">
+                <form id="search-form" class="search-form">
+                    <input type="search" id="search-input" placeholder="Tìm kiếm...">
+                    <button type="submit" class="search-button"><i class='bx bx-search'></i></button>
+                </form>
+                <div class='bx bx-menu' id="menu-icon"></div>
+            </div>
+
+            <ul id="desktop-menu-container" class="navbar">
+                <li><a href="index.html" class="nav-link active-link">Trang chủ</a></li>
+                <li><a href="#products" class="nav-link">Sản phẩm</a></li>
+                <li><a href="#about" class="nav-link">Về chúng tôi</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="mobile-navbar" class="mobile-navbar">
+        <a href="index.html">Trang chủ</a>
+        <a href="#products">Sản phẩm</a>
+        <a href="#about">Về chúng tôi</a>
+    </div>
+    
+    <main>
+        <section class="home">
+            <div class="container">
+                <div class="home-text">
+                    <h1>Nâng Tầm<br>Phong Cách Thể Thao</h1>
+                    <p>Khám phá bộ sưu tập sản phẩm chất lượng cao, thiết kế dành riêng cho bạn.</p>
+                    <a href="#products" class="btn">Khám Phá Ngay</a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="products" class="products-section container">
+            <div class="section-title">
+                <h2>Sản Phẩm Nổi Bật</h2>
+                <p>Tất cả sản phẩm mới với thiết kế hiện đại.</p>
+            </div>
+            <div class="product-layout">
+                <aside id="category-filters" class="category-filters"></aside>
+                <div class="product-content">
+                    <div id="product-grid" class="product-grid"></div>
+                    <div id="pagination-controls" class="pagination-controls"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer id="about" class="footer">
+         <div class="container">
+            <div class="footer-grid">
+                <div class="footer-box">
+                    <a href="index.html" class="logo">
+                        <img src="/images/41616930_transparent-1-1024x382.png" alt="Minori Logo" style="height: 2.5rem;">
+                    </a>
+                    <p>“Minori” – lấy cảm hứng từ ý nghĩa của từ “Minority” – là một cái tên khích lệ chúng ta đứng lên từ đám đông, trở thành những số ít – những người dám đối diện với khó khăn, sự khác biệt và thách thức.</p>
+                    <div class="social">
+                        <a href="#"><i class='bx bxl-facebook'></i></a>
+                        <a href="#"><i class='bx bxl-instagram'></i></a>
+                        <a href="#"><i class='bx bxl-tiktok'></i></a>
+                    </div>
+                </div>
+                 <div class="footer-box">
+                    <h3>Liên hệ</h3>
+                    <div class="contact-info">
+                        <div class="footer-contact-item"><i class='bx bxs-map'></i><span>123 Chu Văn An, Bình Thạnh, HCM</span></div>
+                        <div class="footer-contact-item"><i class='bx bxs-phone'></i><span>0987 742 745</span></div>
+                        <div class="footer-contact-item"><i class='bx bxs-envelope'></i><span>minoristore@gmail.com</span></div>
+                    </div>
+                </div>
+                <div class="w-full">
+                    <div class="rounded-lg overflow-hidden shadow-lg h-80">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.0091276534035!2d106.70580147635503!3d10.810612341357373!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529a2a4fb2b43%3A0x98d122eb1be61c4!2zTWlub3JpIFN0b3JlIC0gQ2h1ecOqbiBQaOG7pSBLaeG7h24gVGjhu4MgVGhhbw!5e0!3m2!1svi!2s!4v1750679424492!5m2!1svi!2s" 
+                            class="w-full h-full"
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+         </div>
+         <div class="copyright"><p>© 2025 Minori. All Rights Reserved.</p></div>
+    </footer>
+    
+    <script>
+    async function renderCategoryFilters() {
+        const container = document.getElementById('category-filters');
+        if (!container) return;
+
+        const res = await fetch('/api/categories/roots');
+        const categories = await res.json();
+
+        container.innerHTML = '<button class="filter-btn" data-slug="">Tất cả</button>';
+        categories.forEach(cat => {
+            container.innerHTML += `<button class="filter-btn" data-slug="${cat.slug}">${cat.name}</button>`;
+        });
+    }
+
+    async function fetchAndRenderProducts(slug = '') {
+        const res = await fetch(`/api/products?danh_muc=${slug}`);
+        const data = await res.json();
+        renderProductGrid(data.products || []);
+    }
+
+    function renderProductGrid(products) {
+        const grid = document.getElementById('product-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        if (!products.length) {
+            grid.innerHTML = '<p>Không có sản phẩm nào.</p>';
+            return;
+        }
+        for (const p of products) {
+            grid.innerHTML += `
+                <div class="product-card">
+                    <img src="${p.hinh_anh}" alt="${p.ten_hang}" class="product-img">
+                    <h3 class="product-name">${p.ten_hang}</h3>
+                    <p class="product-price">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p.gia_ban)}</p>
+                </div>
+            `;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderCategoryFilters();
+        fetchAndRenderProducts();
+
+        document.getElementById('category-filters').addEventListener('click', e => {
+            const btn = e.target.closest('button[data-slug]');
+            if (!btn) return;
+            const slug = btn.dataset.slug;
+            fetchAndRenderProducts(slug);
+        });
+    });
+    </script>
+    <script src="/js/app.js"></script>
+</body>
+</html>

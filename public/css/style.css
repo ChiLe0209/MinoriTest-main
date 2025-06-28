@@ -1,0 +1,408 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* --- CSS Variables --- */
+:root {
+    --primary-color: #2563eb; /* Blue-600 */
+    --dark-color: #1f2937;    /* Gray-800 */
+    --text-color: #374151;    /* Gray-700 */
+    --light-text-color: #6b7280; /* Gray-500 */
+    --bg-color: #ffffff;
+    --container-color: #f9fafb; /* Gray-50 */
+    --border-color: #e5e7eb;   /* Gray-200 */
+    --font-family: 'Poppins', sans-serif;
+}
+
+/* --- Base & Reset --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    text-decoration: none;
+    list-style: none;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--dark-color);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.container {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* --- Reusable Components --- */
+.btn {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 0.8rem 1.8rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    background-color: #1d4ed8; /* Blue-700 */
+}
+
+/* --- Header & Navigation --- */
+.header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background-color: var(--bg-color);
+    transition: box-shadow 0.3s ease-in-out;
+}
+.header.shadow { box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+.nav { height: 5rem; display: flex; align-items: center; justify-content: space-between; }
+.logo img { height: 3rem; }
+.navbar { display: none; }
+.nav-link { font-size: 1rem; font-weight: 500; color: var(--dark-color); position: relative; padding-bottom: 0.25rem; }
+.nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background-color: var(--primary-color); transition: width 0.4s ease; }
+.nav-link:hover::after, .nav-link.active-link::after { width: 100%; }
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* --- Search Form Styles (Updated) --- */
+.search-form {
+    display: none; /* Ẩn trên mobile */
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem; /* Bo góc vuông hơn */
+    overflow: hidden;
+    background-color: var(--container-color);
+}
+.search-form input {
+    border: none;
+    outline: none;
+    padding: 0.75rem 1rem; /* Lớn hơn */
+    font-size: 1rem;       /* Lớn hơn */
+    width: 250px;          /* Dài hơn */
+    background: transparent;
+    transition: border-color 0.3s ease;
+}
+.search-form input:focus {
+     box-shadow: 0 0 0 2px var(--primary-color);
+}
+.search-form .search-button {
+    background: var(--primary-color); /* Màu nền xanh */
+    color: #fff;                     /* Chữ trắng */
+    border: none;
+    padding: 0.75rem 1.25rem;         /* Cân đối với input */
+    cursor: pointer;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+.search-form .search-button:hover {
+    background-color: #1d4ed8; /* Màu xanh đậm hơn khi hover */
+}
+
+/* Mobile Menu */
+#menu-icon { font-size: 2rem; cursor: pointer; }
+.mobile-navbar { position: fixed; top: 5rem; left: -100%; width: 100%; height: calc(100% - 5rem); background-color: var(--bg-color); padding: 1.5rem; transition: left 0.3s ease-in-out; border-top: 1px solid var(--border-color); }
+.mobile-navbar.open { left: 0; }
+.mobile-navbar a { display: block; padding: 0.75rem 0; font-size: 1.25rem; color: var(--dark-color); }
+
+/* --- Hero Section --- */
+.home { position: relative; height: 500px; width: 100%; display: flex; align-items: center; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop') no-repeat center center/cover; }
+.home-text { color: #fff; }
+.home-text h1 { font-size: 3rem; font-weight: 700; line-height: 1.2; margin-bottom: 1rem; }
+.home-text p { margin-bottom: 2rem; max-width: 500px; }
+
+/* --- Products Section --- */
+.products-section { padding: 4rem 0; }
+.section-title { text-align: center; margin-bottom: 3rem; }
+.section-title h2 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+.section-title p { color: var(--light-text-color); }
+.category-filters { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 3rem; }
+.filter-btn { padding: 0.5rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: 2px solid var(--border-color); border-radius: 9999px; transition: all 0.3s ease; cursor: pointer; background-color: #fff; }
+.filter-btn.active, .filter-btn:hover { background-color: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+
+.product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.product-card { background-color: #fff; border: 1px solid var(--border-color); border-radius: 0.75rem; display: flex; flex-direction: column; overflow: hidden; transition: all 0.3s ease; }
+.product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+.product-img-container { width: 100%; height: 220px; background-color: var(--container-color); overflow: hidden; padding: 1rem; }
+.product-img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.4s ease; }
+.product-card:hover .product-img { transform: scale(1.05); }
+.product-info { padding: 1rem; flex-grow: 1; display: flex; flex-direction: column; border-top: 1px solid var(--border-color); }
+.product-title { font-size: 0.9rem; font-weight: 600; color: var(--dark-color); margin-bottom: 0.5rem; }
+.product-price { font-size: 1rem; font-weight: 700; color: var(--primary-color); margin-top: 0.5rem; }
+.product-contact-icon { position: absolute; right: 1rem; bottom: 1rem; background-color: #fff; padding: 0.75rem; border-radius: 50%; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); font-size: 1.25rem; color: var(--dark-color); opacity: 0; transition: all 0.3s ease; transform: scale(0.9); }
+.product-card:hover .product-contact-icon { opacity: 1; transform: scale(1); }
+.product-contact-icon:hover { background-color: var(--primary-color); color: #fff; }
+.pagination-controls { display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 3rem; }
+.pagination-controls button { padding: 0.5rem 1rem; border-radius: 0.375rem; background-color: #e5e7eb; color: var(--text-color); border: none; cursor: pointer; }
+.pagination-controls button:disabled { opacity: 0.5; cursor: not-allowed; }
+.pagination-controls button.active { background-color: var(--primary-color); color: #fff; }
+
+/* --- Footer --- */
+.footer { background-color: #f3f4f6; padding-top: 4rem; }
+.footer-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+.footer-box h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; }
+.footer-link { display: block; margin-bottom: 0.5rem; color: var(--light-text-color); transition: all 0.3s ease; }
+.footer-link:hover { color: var(--primary-color); transform: translateX(4px); }
+.footer-box .social { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; }
+.footer-box .social a { font-size: 1.5rem; color: var(--light-text-color); }
+.footer-box .social a:hover { color: var(--primary-color); }
+.footer-contact-item { display: flex; align-items: center; margin-bottom: 0.75rem; color: var(--light-text-color); }
+.footer-contact-item .bx { margin-right: 0.5rem; }
+.copyright { text-align: center; color: var(--light-text-color); font-size: 0.875rem; margin-top: 3rem; border-top: 1px solid var(--border-color); padding: 1.5rem 0; }
+
+
+/* --- Responsive Design --- */
+@media (min-width: 768px) {
+    .product-grid { grid-template-columns: repeat(3, 1fr); }
+    .footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 992px) {
+    #menu-icon { display: none; }
+    .navbar { display: flex; align-items: center; gap: 2rem; }
+    .search-form { display: flex; } /* Hiện thanh tìm kiếm trên desktop */
+}
+
+@media (min-width: 1200px) {
+    .product-grid { grid-template-columns: repeat(4, 1fr); }
+    .footer-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* CSS cho bộ lọc danh mục đa cấp */
+
+/* Mặc định ẩn danh sách con */
+.child-list {
+    display: none;
+}
+
+/* Khi thẻ li cha có class 'open', hiển thị danh sách con */
+li.has-children.open > .child-list {
+    display: block;
+}
+
+/* Thêm biểu tượng mũi tên cho danh mục cha */
+li.has-children > .filter-link {
+    position: relative;
+    padding-right: 2.5rem; /* Thêm khoảng cách bên phải để tránh bị dính */
+}
+
+
+li.has-children > .filter-link::after {
+    content: '▸';
+    position: absolute;
+    right: 12px; /* 0.75rem */
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Xoay mũi tên khi mở ra */
+li.has-children.open > .filter-link::after {
+    transform: translateY(-50%) rotate(90deg);
+}
+
+/* Thêm một chút định dạng cho link active (có thể bạn đã có trong Tailwind) */
+.filter-link.font-bold {
+    font-weight: 600;
+}
+/* --- CATEGORY FILTER TREE --- */
+.category-filters ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.category-filters li {
+    position: relative;
+    padding-left: 1rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.category-filters .child-list {
+    margin-top: 0.25rem;
+    padding-left: 1rem;
+    border-left: 2px dashed var(--border-color);
+}
+
+.filter-link {
+    display: inline-block;
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    transition: all 0.3s ease;
+}
+
+.filter-link:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.filter-link.active-filter {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+/* --- PRODUCT SECTION LAYOUT --- */
+.product-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Desktop: chia 2 cột */
+@media (min-width: 992px) {
+    .product-layout {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    .category-filters {
+        width: 250px;
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        background-color: #fff;
+    }
+    .product-content {
+        flex-grow: 1;
+    }
+}
+
+/* --- CATEGORY FILTER TREE STYLE (nhúng thêm) --- */
+.category-filters ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.category-filters li {
+    position: relative;
+    padding-left: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.category-filters .child-list {
+    margin-top: 0.25rem;
+    padding-left: 1rem;
+    border-left: 2px dashed var(--border-color);
+}
+
+.filter-link {
+    display: inline-block;
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    transition: all 0.3s ease;
+}
+
+.filter-link:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.filter-link.active-filter {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+/* Arrow icon cho danh mục cha */
+li.has-children > .filter-link::after {
+    content: '▸';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.2s ease-in-out;
+}
+li.has-children.open > .filter-link::after {
+    transform: translateY(-50%) rotate(90deg);
+}
+/* --- CSS cho Form Biến thể (Thêm vào cuối file admin.css) --- */
+.form-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--grey);
+}
+.form-section:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+.form-section h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--dark);
+}
+
+.variant-form-group {
+    background: var(--grey);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--primary-color);
+    position: relative;
+}
+
+.btn-remove-variant {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: var(--danger);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+}
+.btn-remove-variant:hover {
+    color: #fff;
+    background-color: var(--danger);
+    border-radius: 50%;
+}
+
+.btn-add-variant {
+    width: 100%;
+    padding: 0.8rem;
+    margin-top: 0.5rem;
+    background: var(--light-primary);
+    color: var(--primary-color);
+    border: 2px dashed var(--primary-color);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.btn-add-variant:hover {
+    background: var(--primary-color);
+    color: #fff;
+}

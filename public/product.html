@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết Sản phẩm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css"> <link rel="icon" type="image/png" href="/images/icon.jpg">
+</head>
+<body class="bg-gray-100 font-sans">
+    <header class="header">
+        </header>
+
+    <main class="container mx-auto px-4 sm:px-6 py-12">
+        <div id="product-detail-container" class="bg-white p-6 sm:p-8 rounded-lg shadow-lg grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            <div id="product-image-container">
+                <img id="product-image" src="https://placehold.co/600x600/f3f4f6/9ca3af?text=Loading..." alt="Đang tải sản phẩm" class="w-full aspect-square rounded-lg object-contain">
+            </div>
+
+            <div id="product-info-container" class="flex flex-col">
+                <h1 id="product-name" class="text-3xl md:text-4xl font-bold text-gray-900">Đang tải...</h1>
+                <p class="text-gray-500 text-base mt-2">Thương hiệu: <span id="product-brand" class="font-semibold">...</span></p>
+                <p class="text-gray-500 text-base">Mã hàng: <span id="product-sku" class="font-semibold">...</span></p>
+                
+                <div class="my-6">
+                    <span class="text-3xl md:text-4xl font-bold text-blue-600" id="product-price">0đ</span>
+                    <span class="text-base text-gray-600 ml-4">Tồn kho: <span id="product-stock" class="font-semibold">0</span></span>
+                </div>
+
+                <div id="variants-container" class="mt-6">
+                    <h3 class="text-base font-semibold text-gray-900 mb-2">Hương Vị / Tùy chọn:</h3>
+                    <div id="variant-options" class="flex flex-wrap gap-3">
+                        </div>
+                </div>
+                <div class="flex-grow mt-8">
+                    <h3 class="font-bold text-lg mb-2">Mô tả</h3>
+                    <div id="product-description" class="prose max-w-none text-gray-700 leading-relaxed"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        </footer>
+
+    <script src="/js/product.js"></script>
+</body>
+</html>
