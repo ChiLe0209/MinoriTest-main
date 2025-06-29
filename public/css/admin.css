@@ -495,3 +495,13 @@ li {
         grid-column: 1 / -1;
     }
 }
+.image-preview {
+    max-width: 100px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--grey);
+    display: none; /* Mặc định ẩn */
+}
+.image-input:not(:placeholder-shown) + .image-preview {
+    display: block;
+}

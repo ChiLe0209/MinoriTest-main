@@ -4,17 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minori - Trang Quản Trị</title>
-    <!-- Remixicon CDN -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
-    <!-- Custom Admin CSS -->
     <link rel="stylesheet" href="/css/admin.css">
     <link rel="icon" type="image/png" href="/images/icon.jpg">
-    <!-- TinyMCE -->
-    <script src="https://cdn.tiny.cloud/1/wir0oi585q8wov294nk8drppodwf3xmm20j882hzx467343t/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 <body>
 
-    <!-- Login Page -->
     <div id="admin-login" class="login-page">
         <div class="login-form-container">
             <h1>Admin Đăng Nhập</h1>
@@ -23,11 +19,9 @@
         </div>
     </div>
 
-    <!-- Main Dashboard Layout (Hidden by default) -->
     <div id="admin-dashboard" class="hidden">
-        <!-- SIDEBAR -->
         <section class="sidebar">
-            <a href="#" class="logo">
+            <a href="/admin" class="logo">
                 <i class='ri-store-2-line'></i>
                 <div class="logo-name">Admin Minori</div>
             </a>
@@ -37,75 +31,36 @@
                 <li data-content="categories-content"><a href="#"><i class="ri-folder-line"></i>Danh mục</a></li>
             </ul>
             <ul class="side-menu logout-section">
-                <li><a href="index.html" class="logout"><i class="ri-logout-circle-r-line"></i>Về trang bán hàng</a></li>
+                <li><a href="/" class="logout"><i class="ri-logout-circle-r-line"></i>Về trang bán hàng</a></li>
             </ul>
         </section>
-        <!-- SIDEBAR -->
 
-        <!-- CONTENT -->
         <section class="content">
-            <!-- NAVBAR -->
             <nav>
                 <i class="ri-menu-line" id="menu-toggle"></i>
                 <div style="flex-grow: 1;"></div>
                 <input type="checkbox" id="switch-mode" hidden>
                 <label for="switch-mode" class="switch-mode"></label>
-                <a href="#" class="profile">
-                    <img src="https://scontent.fsgn5-3.fna.fbcdn.net/v/t39.30808-1/487697264_2356900698018596_5277277433180003149_n.jpg?stp=dst-jpg_s720x720_tt6&_nc_cat=104&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeFf4yhy6SIC4B_MlKZth-_-UprNt1PDPjRSms23U8M-NIQBC2gO4B0SZ99PaYbrHlV0hcd9lxD0edhRpKiCKiww&_nc_ohc=kXnzGhEuxLcQ7kNvwHLos3Z&_nc_oc=AdndKwfanF1Pp42HqONvKcgcMQ2w4S16ILJasU7xJ0k2k1VbL5Up8aibo0TdEsqFadXEzDqUQ-zpeReyPAgkP7uK&_nc_zt=24&_nc_ht=scontent.fsgn5-3.fna&_nc_gid=d3zuq1lpO2RCqyq2w7ilAg&oh=00_AfPoDbomN8G2_eWhQhEGlyk1fCOyadeEKUJ1GeJYRzClxA&oe=6864531F">
-                </a>
             </nav>
-            <!-- NAVBAR -->
 
-            <!-- MAIN -->
             <main>
-                <!-- Dashboard Content -->
                 <div id="dashboard-content" class="main-content">
-                    <div class="header">
-                        <div class="left">
-                            <h1>Tổng quan</h1>
-                        </div>
-                    </div>
+                    <div class="header"><h1>Tổng quan</h1></div>
                     <ul class="stats-cards">
-                        <li>
-                            <i class="ri-calendar-todo-line"></i>
-                            <span class="text">
-                                <h3 id="total-products-stat">0</h3>
-                                <p>Sản phẩm</p>
-                            </span>
-                        </li>
-                        <li>
-                            <i class="ri-folder-chart-line"></i>
-                            <span class="text">
-                                <h3 id="total-categories-stat">0</h3>
-                                <p>Danh mục</p>
-                            </span>
-                        </li>
-                        
+                        <li><i class="ri-calendar-todo-line"></i><span class="text"><h3 id="total-products-stat">0</h3><p>Sản phẩm</p></span></li>
+                        <li><i class="ri-folder-chart-line"></i><span class="text"><h3 id="total-categories-stat">0</h3><p>Danh mục</p></span></li>
                     </ul>
                 </div>
 
-                <!-- Products Content -->
                 <div id="products-content" class="main-content hidden">
                     <div class="header">
-                        <div class="left">
-                            <h1>Quản lý Sản phẩm</h1>
-                        </div>
-                        <div class="right">
-                           <button id="add-product-btn" class="btn-add"><i class="ri-add-line"></i><span>Thêm mới</span></button>
-                        </div>
+                        <div class="left"><h1>Quản lý Sản phẩm</h1></div>
+                        <div class="right"><button id="add-product-btn" class="btn-add"><i class="ri-add-line"></i><span>Thêm mới</span></button></div>
                     </div>
                     <div class="table-data">
                         <div class="order">
                             <table>
-                                <thead>
-                                    <tr>
-                                        <th>Sản phẩm</th>
-                                        <th>Mã hàng</th>
-                                        <th>Giá bán</th>
-                                        <th>Tồn kho</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                </thead>
+                                <thead><tr><th>Sản phẩm</th><th>Mã hàng</th><th>Giá</th><th>Tồn kho</th><th>Hành động</th></tr></thead>
                                 <tbody id="products-table-body"></tbody>
                             </table>
                         </div>
@@ -113,117 +68,71 @@
                     <div id="product-pagination-controls" class="pagination"></div>
                 </div>
 
-                <!-- Categories Content -->
                 <div id="categories-content" class="main-content hidden">
                      <div class="header">
-                        <div class="left">
-                            <h1>Quản lý Danh mục</h1>
-                        </div>
-                        <div class="right">
-                           <button id="add-category-btn" class="btn-add"><i class="ri-add-line"></i><span>Thêm mới</span></button>
-                        </div>
+                        <div class="left"><h1>Quản lý Danh mục</h1></div>
+                        <div class="right"><button id="add-category-btn" class="btn-add"><i class="ri-add-line"></i><span>Thêm mới</span></button></div>
                     </div>
                     <div class="table-data">
                         <div class="order">
                             <table>
-                                <thead>
-                                    <tr>
-                                        <th>Tên hiển thị</th>
-                                        <th>Slug</th>
-                                        <th>Danh mục cha</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                </thead>
+                                <thead><tr><th>Tên hiển thị</th><th>Slug</th><th>Danh mục cha</th><th>Hành động</th></tr></thead>
                                 <tbody id="categories-table-body"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-
             </main>
-            <!-- MAIN -->
         </section>
-        <!-- CONTENT -->
     </div>
 
-
-    <!-- MODALS -->
-    <!-- Product Modal -->
     <div id="product-modal" class="modal">
-    <div class="modal-content">
-        <h3 id="modal-title">Thêm sản phẩm mới</h3>
-        <form id="product-form">
-            <input type="hidden" id="product-id">
-            
-            <div class="form-section">
-                <h4>Thông tin chung</h4>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="product-ma-hang">Mã hàng (chung)</label>
-                        <input type="text" id="product-ma-hang" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-ten-hang">Tên hàng</label>
-                        <input type="text" id="product-ten-hang" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-thuong-hieu">Thương hiệu</label>
-                        <input type="text" id="product-thuong-hieu">
-                    </div>
-                    <div class="form-group">
-                        <label for="product-danh-muc">Danh mục</label>
-                        <select id="product-danh-muc" required></select>
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="product-hinh-anh-bia">URL Ảnh bìa (hiển thị ở trang chủ)</label>
-                        <input type="text" id="product-hinh-anh-bia" required>
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="product-mo-ta">Mô tả chi tiết</label>
-                        <textarea id="product-mo-ta"></textarea>
+        <div class="modal-content">
+            <h3 id="modal-title">Thêm sản phẩm mới</h3>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="form-section">
+                    <h4>Thông tin chung</h4>
+                    <div class="form-grid">
+                        <div class="form-group"><label for="product-ma-hang">Mã hàng (chung)</label><input type="text" id="product-ma-hang" required></div>
+                        <div class="form-group"><label for="product-ten-hang">Tên hàng</label><input type="text" id="product-ten-hang" required></div>
+                        <div class="form-group"><label for="product-thuong-hieu">Thương hiệu</label><input type="text" id="product-thuong-hieu"></div>
+                        <div class="form-group"><label for="product-danh-muc">Danh mục</label><select id="product-danh-muc" required></select></div>
+                        
+                        <div class="form-group full-width">
+                            <label for="product-hinh-anh-bia">Ảnh bìa (hiển thị ở trang chủ)</label>
+                            <input type="file" id="product-hinh-anh-bia" class="image-input" accept="image/*">
+                            <img class="image-preview" id="hinh-anh-bia-preview" src="#" alt="Xem trước ảnh bìa"/>
+                        </div>
+                        
+                        <div class="form-group full-width"><label for="product-mo-ta">Mô tả chi tiết</label><textarea id="product-mo-ta"></textarea></div>
                     </div>
                 </div>
-            </div>
-
-            <div class="form-section">
-                <h4>Các biến thể</h4>
-                <div id="variants-list-container">
-                    </div>
-                <button type="button" id="add-variant-btn" class="btn-add-variant">
-                    <i class="ri-add-line"></i> Thêm biến thể
-                </button>
-            </div>
-
-            <div class="modal-actions">
-                <button type="button" class="btn-cancel" data-close-modal="product-modal">Hủy</button>
-                <button type="submit" class="btn-save">Lưu</button>
-            </div>
-        </form>
+                <div class="form-section">
+                    <h4>Các biến thể</h4>
+                    <div id="variants-list-container"></div>
+                    <button type="button" id="add-variant-btn" class="btn-add-variant"><i class="ri-add-line"></i> Thêm biến thể</button>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" data-close-modal="product-modal">Hủy</button>
+                    <button type="submit" class="btn-save">Lưu</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-    <!-- Category Modal -->
     <div id="category-modal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
              <h3 id="category-modal-title">Thêm Danh mục Mới</h3>
              <form id="category-form">
                 <input type="hidden" id="category-id">
                 <div class="form-grid" style="grid-template-columns: 1fr;">
-                    <div class="form-group">
-                        <label for="category-display-name">Tên hiển thị</label>
-                        <input type="text" id="category-display-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="category-slug">Tên định danh (slug)</label>
-                        <input type="text" id="category-slug" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="category-parent">Danh mục cha</label>
-                        <select id="category-parent"></select>
-                    </div>
+                    <div class="form-group"><label for="category-display-name">Tên hiển thị</label><input type="text" id="category-display-name" required></div>
+                    <div class="form-group"><label for="category-slug">Tên định danh (slug)</label><input type="text" id="category-slug" required></div>
+                    <div class="form-group"><label for="category-parent">Danh mục cha</label><select id="category-parent"></select></div>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" id="close-category-modal-btn" class="btn-cancel">Hủy</button>
+                    <button type="button" class="btn-cancel" data-close-modal="category-modal">Hủy</button>
                     <button type="submit" class="btn-save">Lưu</button>
                 </div>
              </form>

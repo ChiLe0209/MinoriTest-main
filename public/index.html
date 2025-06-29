@@ -64,6 +64,21 @@
         </section>
 
     </main>
+    <!-- Form Liên Hệ Modal -->
+<div id="contact-modal" class="contact-modal hidden">
+  <div class="contact-card">
+    <h3>Thông tin liên hệ</h3>
+    <p><strong>Cửa hàng:</strong> Minori Store</p>
+    <p><strong>Email:</strong> minoristore@gmail.com</p>
+    <p><strong>Hotline:</strong> 0987742745</p>
+    <p><strong>Địa chỉ:</strong> 123 Chu Văn An, P26, Bình Thạnh, TP.HCM</p>
+    <div class="close-wrap">
+      <button id="close-contact-modal-btn">Đóng</button>
+    </div>
+  </div>
+</div>
+
+
 
     <footer id="about" class="footer">
          <div class="container">
@@ -104,57 +119,20 @@
          <div class="copyright"><p>© 2025 Minori. All Rights Reserved.</p></div>
     </footer>
     
-    <script>
-    async function renderCategoryFilters() {
-        const container = document.getElementById('category-filters');
-        if (!container) return;
-
-        const res = await fetch('/api/categories/roots');
-        const categories = await res.json();
-
-        container.innerHTML = '<button class="filter-btn" data-slug="">Tất cả</button>';
-        categories.forEach(cat => {
-            container.innerHTML += `<button class="filter-btn" data-slug="${cat.slug}">${cat.name}</button>`;
-        });
-    }
-
-    async function fetchAndRenderProducts(slug = '') {
-        const res = await fetch(`/api/products?danh_muc=${slug}`);
-        const data = await res.json();
-        renderProductGrid(data.products || []);
-    }
-
-    function renderProductGrid(products) {
-        const grid = document.getElementById('product-grid');
-        if (!grid) return;
-        grid.innerHTML = '';
-        if (!products.length) {
-            grid.innerHTML = '<p>Không có sản phẩm nào.</p>';
-            return;
-        }
-        for (const p of products) {
-            grid.innerHTML += `
-                <div class="product-card">
-                    <img src="${p.hinh_anh}" alt="${p.ten_hang}" class="product-img">
-                    <h3 class="product-name">${p.ten_hang}</h3>
-                    <p class="product-price">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p.gia_ban)}</p>
-                </div>
-            `;
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        renderCategoryFilters();
-        fetchAndRenderProducts();
-
-        document.getElementById('category-filters').addEventListener('click', e => {
-            const btn = e.target.closest('button[data-slug]');
-            if (!btn) return;
-            const slug = btn.dataset.slug;
-            fetchAndRenderProducts(slug);
-        });
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.contact-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('contact-modal').classList.remove('hidden');
+      });
     });
-    </script>
+
+    document.getElementById('close-contact-modal-btn').addEventListener('click', () => {
+      document.getElementById('contact-modal').classList.add('hidden');
+    });
+  });
+</script>
+
     <script src="/js/app.js"></script>
 </body>
 </html>

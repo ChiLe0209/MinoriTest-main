@@ -1,17 +1,23 @@
-// routes/product.routes.js
 const express = require('express');
 const router = express.Router();
 const ProductController = require('../controllers/product.controller');
+const upload = require('../middleware/upload'); // Import upload instance
 
-// Route để lấy tất cả sản phẩm (có phân trang/lọc)
-router.get('/', ProductController.getAllProducts);
+// Định nghĩa các trường file sẽ được tải lên
+const productUploadHandler = upload.fields([
+    { name: 'hinh_anh_bia', maxCount: 1 },
+    { name: 'variant_images', maxCount: 10 } // Tên này phải khớp với FormData ở frontend
+]);
 
-// Route để lấy một sản phẩm bằng ID
-router.get('/:id', ProductController.getProductById);
+// GET all và POST (có xử lý file)
+router.route('/')
+    .get(ProductController.getAllProducts)
+    .post(productUploadHandler, ProductController.createProduct);
 
-// Các route CRUD cơ bản
-router.post('/', ProductController.createProduct);
-router.put('/:id', ProductController.updateProduct);
-router.delete('/:id', ProductController.deleteProduct);
+// GET, PUT (có xử lý file), DELETE
+router.route('/:id')
+    .get(ProductController.getProductById)
+    .put(productUploadHandler, ProductController.updateProduct)
+    .delete(ProductController.deleteProduct);
 
 module.exports = router;

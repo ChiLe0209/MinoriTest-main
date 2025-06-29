@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi tiết Sản phẩm</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/style.css"> <link rel="icon" type="image/png" href="/images/icon.jpg">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/png" href="/images/icon.jpg">
 </head>
 <body class="bg-gray-100 font-sans">
     <header class="header">
@@ -29,16 +30,33 @@
 
                 <div id="variants-container" class="mt-6">
                     <h3 class="text-base font-semibold text-gray-900 mb-2">Hương Vị / Tùy chọn:</h3>
-                    <div id="variant-options" class="flex flex-wrap gap-3">
-                        </div>
+                    <div id="variant-options" class="flex flex-wrap gap-3"></div>
                 </div>
+
                 <div class="flex-grow mt-8">
                     <h3 class="font-bold text-lg mb-2">Mô tả</h3>
                     <div id="product-description" class="prose max-w-none text-gray-700 leading-relaxed"></div>
                 </div>
+
+                <button id="contact-btn" class="w-full mt-8 bg-blue-600 text-white font-bold py-3 sm:py-4 rounded-lg text-base sm:text-lg hover:bg-blue-700 transition-colors">
+                    Liên hệ
+                </button>
             </div>
         </div>
     </main>
+
+    <div id="contact-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50 p-4" style="font-family: 'Poppins', sans-serif;">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+            <h3 class="text-2xl font-bold mb-6 text-center text-gray-800">Thông tin liên hệ</h3>
+            <div class="space-y-3 text-gray-700">
+                <p><strong>Cửa hàng:</strong> Minori Store</p><p><strong>Email:</strong> minoristore@gmail.com</p><p><strong>Hotline:</strong> 0987742745</p><p><strong>Địa chỉ:</strong> 123 Chu Văn An, P26, Bình Thạnh, TP.HCM</p>
+            </div>
+            <div class="flex justify-end mt-8">
+                <button id="close-contact-modal-btn" class="px-5 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Đóng</button>
+            </div>
+        </div>
+    </div>
+    <style>@keyframes scale-in { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }</style>
 
     <footer class="footer">
         </footer>

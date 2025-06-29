@@ -1,24 +1,24 @@
 const express = require('express');
+const router = express.Router();
 const {
-    getCategories,
+    getAllCategories,
     getCategoriesFlat,
-    getRootCategories, // Import hàm mới
+    getRootCategories,
     createCategory,
     updateCategory,
     deleteCategory,
 } = require('../controllers/category.controller');
 
-const router = express.Router();
-
 router.route('/')
-    .get(getCategories)
+    .get(getAllCategories)
     .post(createCategory);
 
 router.route('/flat').get(getCategoriesFlat);
-router.route('/roots').get(getRootCategories); // Thêm route mới
+router.route('/roots').get(getRootCategories);
 
 router.route('/:id')
     .put(updateCategory)
     .delete(deleteCategory);
 
+// Dòng này phải có
 module.exports = router;
