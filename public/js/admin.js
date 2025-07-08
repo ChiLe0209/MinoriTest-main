@@ -28,6 +28,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const categoryModalTitle = document.getElementById('category-modal-title');
     const categoryDisplayNameInput = document.getElementById('category-display-name');
     const categorySlugInput = document.getElementById('category-slug');
+    const heroBannersTableBody = document.getElementById('hero-banners-table-body');
+    const addHeroBannerBtn = document.getElementById('add-hero-banner-btn');
+    const heroBannerModal = document.getElementById('hero-banner-modal');
+    const heroBannerForm = document.getElementById('hero-banner-form');
+    const heroBannerModalTitle = document.getElementById('hero-banner-modal-title');
 
     // === CÁC HÀM TIỆN ÍCH ===
     const formatCurrency = (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount || 0);
@@ -96,11 +101,22 @@ document.addEventListener('DOMContentLoaded', function () {
         const variantGroup = document.createElement('div');
         variantGroup.className = 'variant-form-group';
         variantGroup.dataset.id = variantId;
-        variantGroup.innerHTML = `<button type="button" class="btn-remove-variant" title="Xóa biến thể này">&times;</button><div class="form-grid"><div class="form-group"><label>Tên biến thể</label><input type="text" class="variant-name" value="${variant?.name || ''}" required></div><div class="form-group"><label>Mã SKU (tùy chọn)</label><input type="text" class="variant-sku" value="${variant?.sku || ''}"></div><div class="form-group"><label>Giá</label><input type="number" class="variant-price" value="${variant?.price || 0}" required></div><div class="form-group"><label>Tồn kho</label><input type="number" class="variant-stock" value="${variant?.stock || 0}" required></div><div class="form-group full-width"><label>Hình ảnh biến thể</label><input type="file" class="variant-image-input" accept="image/*" data-preview-for="${variantId}"><img class="image-preview" id="preview-${variantId}" src="${variant?.image || '#'}" alt="Xem trước" style="${variant?.image ? 'display:block' : 'display:none'}"/></div></div>`;
+        variantGroup.innerHTML = `
+            <button type="button" class="btn-remove-variant" title="Xóa biến thể này">&times;</button>
+            <div class="form-grid">
+                <div class="form-group"><label>Tên biến thể</label><input type="text" class="variant-name" value="${variant?.name || ''}" required></div>
+                <div class="form-group"><label>Mã SKU (tùy chọn)</label><input type="text" class="variant-sku" value="${variant?.sku || ''}"></div>
+                <div class="form-group"><label>Giá</label><input type="number" class="variant-price" value="${variant?.price || 0}" required></div>
+                <div class="form-group"><label>Tồn kho</label><input type="number" class="variant-stock" value="${variant?.stock || 0}" required></div>
+                <div class="form-group full-width">
+                    <label>Hình ảnh biến thể</label>
+                    <input type="file" class="variant-image-input image-input" accept="image/*" data-preview-for="${variantId}">
+                    <img class="image-preview" id="preview-${variantId}" src="${variant?.image || '#'}" alt="Xem trước" style="${variant?.image ? 'display:block' : 'display:none'}"/>
+                </div>
+            </div>`;
         variantGroup.querySelector('.btn-remove-variant').addEventListener('click', () => variantGroup.remove());
         variantsListContainer.appendChild(variantGroup);
     }
-
     async function loadStats() {
         const productData = await fetchData('/api/products?limit=1');
         const categoryData = await fetchData('/api/categories/flat');
@@ -168,6 +184,22 @@ document.addEventListener('DOMContentLoaded', function () {
             categoriesTableBody.appendChild(newRow);
         });
     };
+    
+    const renderHeroBannersTable = async () => {
+        if (!heroBannersTableBody) return;
+        const banners = await fetchData('/api/hero-banners');
+        heroBannersTableBody.innerHTML = '';
+        if (!banners || banners.length === 0) {
+            heroBannersTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">Chưa có banner nào.</td></tr>';
+            return;
+        }
+        banners.forEach(banner => {
+            const status = banner.isActive ? '<span class="status-active">Hoạt động</span>' : '<span class="status-inactive">Không hoạt động</span>';
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `<td><img src="${banner.imageUrl}" alt="${banner.title}" class="table-image-preview"></td><td>${banner.title}</td><td>${banner.order}</td><td>${status}</td><td><button class="action-btn edit-hero-banner-btn" data-id="${banner._id}"><i class="ri-edit-line"></i></button><button class="action-btn delete-hero-banner-btn" data-id="${banner._id}"><i class="ri-delete-bin-line"></i></button></td>`;
+            heroBannersTableBody.appendChild(newRow);
+        });
+    };
 
     async function populateProductCategoryDropdown(selectedSlug = '') {
         const select = document.getElementById('product-danh-muc');
@@ -200,7 +232,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // === XỬ LÝ SỰ KIỆN ===
     function setupEventListeners() {
+        const heroBannerImageInput = document.getElementById('hero-banner-image');
+    const heroBannerFilenameDisplay = document.getElementById('hero-banner-filename-display');
+
+    if (heroBannerImageInput && heroBannerFilenameDisplay) {
+        heroBannerImageInput.addEventListener('change', function(event) {
+            // Lấy tên tệp từ sự kiện
+            const files = event.target.files;
+            if (files.length > 0) {
+                // Nếu có tệp được chọn, hiển thị tên của nó
+                heroBannerFilenameDisplay.textContent = files[0].name;
+            } else {
+                // Nếu không có tệp nào, hiển thị lại dòng chữ mặc định
+                heroBannerFilenameDisplay.textContent = '';
+            }
+        });
+    }
         document.addEventListener('click', (e) => {
             if (e.target.matches('[data-close-modal]')) {
                 const modalId = e.target.dataset.closeModal;
@@ -226,8 +275,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     const hinhAnhBiaPreview = document.getElementById('hinh-anh-bia-preview');
                     hinhAnhBiaInput.value = '';
                     if (hinhAnhBiaPreview) {
-                        hinhAnhBiaPreview.src = p.hinh_anh_bia || '#';
-                        hinhAnhBiaPreview.style.display = p.hinh_anh_bia ? 'block' : 'none';
+                        hinhAnhBiaPreview.src = p.hinh_anh_bia || p.hinh_anh || '#';
+                        hinhAnhBiaPreview.style.display = (p.hinh_anh_bia || p.hinh_anh) ? 'block' : 'none';
                     }
                     await populateProductCategoryDropdown(p.danh_muc);
                     initializeTinyMCE(p.mo_ta_chi_tiet || '');
@@ -253,10 +302,15 @@ document.addEventListener('DOMContentLoaded', function () {
             if(!button) return;
             const id = button.dataset.id;
             if (button.classList.contains('delete-category-btn')) {
-                if (confirm('Bạn chắc chắn muốn xóa danh mục này? Thao tác này sẽ không thành công nếu danh mục có sản phẩm hoặc danh mục con.')) {
-                    const response = await sendData(`/api/categories/${id}`, 'DELETE');
-                    if (response) { await renderCategoriesTable(); loadStats(); }
-                }
+            if (confirm('Bạn chắc chắn muốn xóa danh mục này? Thao tác này sẽ không thành công nếu danh mục có sản phẩm hoặc danh mục con.')) {
+            // [SỬA] Thêm 'await' để chờ kết quả từ server trả về
+            const response = await sendData(`/api/categories/${id}`, 'DELETE');
+            if (response) { 
+                // [SỬA] Thêm 'await' để đảm bảo bảng được vẽ lại xong
+                await renderCategoriesTable(); 
+                loadStats(); 
+            }
+        }
             } else if (button.classList.contains('edit-category-btn')) {
                 const categories = await fetchData('/api/categories/flat');
                 const catToEdit = categories.find(c => c._id === id);
@@ -270,6 +324,42 @@ document.addEventListener('DOMContentLoaded', function () {
                     parentSelect.disabled = false;
                     await populateParentCategoryDropdown(catToEdit.parent?._id);
                     categoryModal.classList.add('show');
+                }
+            }
+        });
+        addVariantBtn?.addEventListener('click', () => createVariantForm());
+        addHeroBannerBtn?.addEventListener('click', () => {
+            heroBannerForm.reset();
+            document.getElementById('hero-banner-id').value = '';
+            heroBannerModalTitle.textContent = "Thêm Hero Banner Mới";
+            document.getElementById('hero-banner-is-active').checked = true;
+            document.getElementById('hero-banner-image-preview').style.display = 'none';
+            heroBannerModal.classList.add('show');
+        });
+
+        heroBannersTableBody?.addEventListener('click', async (e) => {
+            const button = e.target.closest('button.action-btn');
+            if (!button) return;
+            const id = button.dataset.id;
+            if (button.classList.contains('edit-hero-banner-btn')) {
+                const banner = await fetchData(`/api/hero-banners/${id}`);
+                if (banner) {
+                    heroBannerForm.reset();
+                    document.getElementById('hero-banner-id').value = banner._id;
+                    heroBannerModalTitle.textContent = "Chỉnh sửa Hero Banner";
+                    document.getElementById('hero-banner-title').value = banner.title;
+                    document.getElementById('hero-banner-link').value = banner.link;
+                    document.getElementById('hero-banner-order').value = banner.order;
+                    document.getElementById('hero-banner-is-active').checked = banner.isActive;
+                    const preview = document.getElementById('hero-banner-image-preview');
+                    preview.src = banner.imageUrl;
+                    preview.style.display = 'block';
+                    heroBannerModal.classList.add('show');
+                }
+            } else if (button.classList.contains('delete-hero-banner-btn')) {
+                if (confirm('Bạn có chắc chắn muốn xóa banner này?')) {
+                    await sendData(`/api/hero-banners/${id}`, 'DELETE');
+                    renderHeroBannersTable();
                 }
             }
         });
@@ -304,29 +394,26 @@ document.addEventListener('DOMContentLoaded', function () {
             formData.append('thuong_hieu', document.getElementById('product-thuong-hieu').value);
             formData.append('danh_muc', document.getElementById('product-danh-muc').value);
             formData.append('mo_ta_chi_tiet', tinymce.get('product-mo-ta')?.getContent() || '');
-
             const coverImageFile = document.getElementById('product-hinh-anh-bia').files[0];
             if (coverImageFile) { formData.append('hinh_anh_bia', coverImageFile); }
-            
             const variantsData = [];
             const variantForms = document.querySelectorAll('#variants-list-container .variant-form-group');
-            variantForms.forEach((form, index) => {
+            variantForms.forEach((form) => {
+                const imageInput = form.querySelector('.variant-image-input');
+                const imageFile = imageInput.files[0];
+                if (imageFile) { formData.append('variant_images', imageFile); }
                 variantsData.push({
                     name: form.querySelector('.variant-name').value,
                     sku: form.querySelector('.variant-sku').value,
                     price: parseFloat(form.querySelector('.variant-price').value),
                     stock: parseInt(form.querySelector('.variant-stock').value, 10),
-                    image: form.querySelector('.image-preview').src
+                    image: imageFile ? '' : form.querySelector('.image-preview').src
                 });
-                const variantImageFile = form.querySelector('.variant-image-input').files[0];
-                if (variantImageFile) { formData.append('variant_images', variantImageFile); }
             });
             formData.append('variants', JSON.stringify(variantsData));
-
             const url = id ? `/api/products/${id}` : '/api/products';
             const method = id ? 'PUT' : 'POST';
             const response = await sendData(url, method, formData, true);
-            
             if (response) {
                 await renderProductsTable(id ? currentProductPage : 1);
                 productModal.classList.remove('show');
@@ -334,16 +421,82 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        categoryForm?.addEventListener('submit', async (e) => { /* ... */ });
-        categoryDisplayNameInput?.addEventListener('input', () => { /* ... */ });
-        addVariantBtn?.addEventListener('click', () => createVariantForm());
+        // MinoriTest-main/public/js/admin.js
+
+categoryForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('category-id').value;
+    const categoryData = {
+        name: document.getElementById('category-display-name').value.trim(),
+        slug: document.getElementById('category-slug').value.trim().toLowerCase(),
+        parent: document.getElementById('category-parent').value || null
+    };
+    const response = id ? await sendData(`/api/categories/${id}`, 'PUT', categoryData) : await sendData('/api/categories', 'POST', categoryData);
+    
+    // [SỬA] Thêm await cho các hành động sau khi lưu thành công
+    if(response) { 
+        await renderCategoriesTable(); 
+        categoryModal.classList.remove('show'); 
+        await loadStats(); 
+    }
+});
+
+heroBannerForm?.addEventListener('submit', async (e) => {
+    // 1. Ngăn chặn hành vi mặc định của form là tải lại trang
+    e.preventDefault();
+
+    // 2. Tạo một đối tượng FormData. Đây là cách BẮT BUỘC để gửi file lên server.
+    const formData = new FormData();
+
+    // 3. Lấy ID của banner. Nếu có ID, chúng ta đang chỉnh sửa (PUT). Nếu không, chúng ta đang thêm mới (POST).
+    const id = document.getElementById('hero-banner-id').value;
+
+    // 4. Thêm các dữ liệu văn bản vào formData
+    formData.append('title', document.getElementById('hero-banner-title').value);
+    formData.append('link', document.getElementById('hero-banner-link').value);
+    formData.append('order', document.getElementById('hero-banner-order').value);
+    formData.append('isActive', document.getElementById('hero-banner-is-active').checked);
+
+    // 5. Lấy file hình ảnh từ thẻ input có id="hero-banner-image"
+    //    Đây là bước quan trọng nhất. HTML của bạn PHẢI có một input với id này.
+    const imageInput = document.getElementById('hero-banner-image');
+    const imageFile = imageInput.files[0]; // Lấy file đầu tiên người dùng chọn
+
+    // 6. KIỂM TRA nếu người dùng có chọn file mới
+    if (imageFile) {
+        // Nếu có file, thêm nó vào formData với tên là 'hero_image'.
+        // Tên 'hero_image' này PHẢI KHỚP với tên mà server mong đợi (trong middleware .single('hero_image'))
+        formData.append('hero_image', imageFile);
+    }
+
+    // 7. Xác định URL và phương thức (method) dựa trên việc có ID hay không
+    const url = id ? `/api/hero-banners/${id}` : '/api/hero-banners';
+    const method = id ? 'PUT' : 'POST';
+
+    // 8. Gọi hàm sendData để gửi formData lên server.
+    //    Tham số cuối cùng `true` báo cho hàm sendData biết đây là formData và không cần set header 'Content-Type' thủ công.
+    const response = await sendData(url, method, formData, true);
+
+    // 9. Nếu gửi thành công, vẽ lại bảng và đóng modal
+    if (response) {
+        renderHeroBannersTable();
+        heroBannerModal.classList.remove('show');
+    }
+});
+
+        categoryDisplayNameInput?.addEventListener('input', () => {
+            if (!document.getElementById('category-id').value) {
+                 categorySlugInput.value = generateSlug(categoryDisplayNameInput.value);
+            }
+        });
         
-        document.getElementById('product-modal')?.addEventListener('change', (e) => {
-            if (e.target.matches('input[type="file"]')) {
+        document.addEventListener('change', (e) => {
+            if(e.target.matches('input[type="file"].image-input')) {
                 const file = e.target.files[0];
                 if (file) {
-                    const previewId = e.target.id === 'product-hinh-anh-bia' ? 'hinh-anh-bia-preview' : `preview-${e.target.dataset.previewFor}`;
+                    const previewId = `preview-${e.target.dataset.previewFor}` || e.target.id + '-preview';
                     const previewElement = document.getElementById(previewId);
+
                     if (previewElement) {
                         previewElement.src = URL.createObjectURL(file);
                         previewElement.style.display = 'block';
@@ -364,13 +517,16 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             const data = await response.json();
             if (response.ok) {
-                loginSection.style.display = 'none';
-                dashboardSection.classList.remove('hidden');
-                setupDashboardUI();
-                setupEventListeners();
-                loadStats();
-                renderProductsTable(1);
-                renderCategoriesTable();
+        loginSection.style.display = 'none';
+        dashboardSection.classList.remove('hidden');
+        setupDashboardUI();
+        setupEventListeners();
+                await Promise.all([
+            loadStats(),
+            renderProductsTable(1),
+            renderCategoriesTable(),
+            renderHeroBannersTable()
+        ]);
             } else {
                 alert(data.message || 'Lỗi không xác định.');
             }

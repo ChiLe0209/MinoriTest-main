@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {
-    getAllCategories,
+    getCategories,
     getCategoriesFlat,
     getRootCategories,
     createCategory,
@@ -10,7 +10,7 @@ const {
 } = require('../controllers/category.controller');
 
 router.route('/')
-    .get(getAllCategories)
+    .get(getCategories)
     .post(createCategory);
 
 router.route('/flat').get(getCategoriesFlat);
@@ -20,5 +20,5 @@ router.route('/:id')
     .put(updateCategory)
     .delete(deleteCategory);
 
-// Dòng này phải có
+// Dòng này phải có ở cuối file
 module.exports = router;

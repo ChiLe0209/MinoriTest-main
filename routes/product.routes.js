@@ -1,23 +1,23 @@
+// MinoriTest-main/routes/product.routes.js
+
 const express = require('express');
 const router = express.Router();
 const ProductController = require('../controllers/product.controller');
-const upload = require('../middleware/upload'); // Import upload instance
+// [SỬA] Import middleware upload sản phẩm
+const { productUpload } = require('../middleware/upload');
 
-// Định nghĩa các trường file sẽ được tải lên
-const productUploadHandler = upload.fields([
-    { name: 'hinh_anh_bia', maxCount: 1 },
-    { name: 'variant_images', maxCount: 10 } // Tên này phải khớp với FormData ở frontend
-]);
+// Các route CRUD cơ bản
+router.get('/', ProductController.getAllProducts);
 
-// GET all và POST (có xử lý file)
-router.route('/')
-    .get(ProductController.getAllProducts)
-    .post(productUploadHandler, ProductController.createProduct);
+// [SỬA] Thêm middleware 'productUpload' để xử lý multipart/form-data
+router.post('/', productUpload, ProductController.createProduct);
 
-// GET, PUT (có xử lý file), DELETE
-router.route('/:id')
-    .get(ProductController.getProductById)
-    .put(productUploadHandler, ProductController.updateProduct)
-    .delete(ProductController.deleteProduct);
+router.get('/:id', ProductController.getProductById);
 
+// [SỬA] Thêm middleware 'productUpload' để xử lý multipart/form-data
+router.put('/:id', productUpload, ProductController.updateProduct);
+
+router.delete('/:id', ProductController.deleteProduct);
+
+// Dòng này phải có ở cuối file
 module.exports = router;

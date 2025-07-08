@@ -36,7 +36,7 @@
     }
 
     .container {
-        max-width: 1200px;
+        max-width: 1300px;
         margin-left: auto;
         margin-right: auto;
         padding-left: 1rem;
@@ -67,7 +67,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        z-index: 100;
+        z-index: 999;
         background-color: var(--bg-color);
         transition: box-shadow 0.3s ease-in-out;
     }
@@ -124,7 +124,7 @@
 
     /* Mobile Menu */
     #menu-icon { font-size: 2rem; cursor: pointer; }
-    .mobile-navbar { position: fixed; top: 5rem; left: -100%; width: 100%; height: calc(100% - 5rem); background-color: var(--bg-color); padding: 1.5rem; transition: left 0.3s ease-in-out; border-top: 1px solid var(--border-color); }
+    .mobile-navbar { position: fixed; top: 5rem; left: -100%; width: 30%; height: calc(100% - 5rem); background-color: var(--bg-color); padding: 1.5rem; transition: left 0.3s ease-in-out; border-top: 1px solid var(--border-color); z-index: 99; }
     .mobile-navbar.open { left: 0; }
     .mobile-navbar a { display: block; padding: 0.75rem 0; font-size: 1.25rem; color: var(--dark-color); }
 
@@ -161,24 +161,76 @@
     .pagination-controls button.active { background-color: var(--primary-color); color: #fff; }
 
     /* --- Footer --- */
-    .footer { background-color: #f3f4f6; padding-top: 4rem; }
-    .footer-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-    .footer-box h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; }
-    .footer-link { display: block; margin-bottom: 0.5rem; color: var(--light-text-color); transition: all 0.3s ease; }
-    .footer-link:hover { color: var(--primary-color); transform: translateX(4px); }
-    .footer-box .social { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; }
-    .footer-box .social a { font-size: 1.5rem; color: var(--light-text-color); }
-    .footer-box .social a:hover { color: var(--primary-color); }
-    .footer-contact-item { display: flex; align-items: center; margin-bottom: 0.75rem; color: var(--light-text-color); }
-    .footer-contact-item .bx { margin-right: 0.5rem; }
-    .copyright { text-align: center; color: var(--light-text-color); font-size: 0.875rem; margin-top: 3rem; border-top: 1px solid var(--border-color); padding: 1.5rem 0; }
+    .footer {
+  background-color: #f3f4f6;
+  padding: 3rem 0 2rem;
+}
+.footer .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+.footer-box {
+  text-align: left;
+}
+.footer-box h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.footer-box p {
+  color: #374151;
+  margin-top: 1rem;
+}
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  color: #6b7280;
+}
+.footer-contact-item .bx {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+.footer-box .social {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.footer-box .social a {
+  color: #6b7280;
+  font-size: 1.5rem;
+}
+.footer-box .social a:hover {
+  color: #2563eb;
+}
+.map-wrapper iframe {
+  width: 100%;
+  border-radius: 0.5rem;
+  height: 200px;
+}
+.copyright {
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.25rem;
+}
 
+/* Responsive */
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: flex-start;
+  }
+}
 
-    /* --- Responsive Design --- */
-    @media (min-width: 768px) {
-        .product-grid { grid-template-columns: repeat(3, 1fr); }
-        .footer-grid { grid-template-columns: repeat(2, 1fr); }
-    }
 
     @media (min-width: 992px) {
         #menu-icon { display: none; }
@@ -519,3 +571,75 @@
     max-width: 90vw;
   }
 }
+
+.slideshow-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background-color: rgba(0,0,0,0.3);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+}
+.slideshow-nav:hover {
+    background-color: rgba(0,0,0,0.6);
+}
+.slideshow-nav.prev {
+    left: 1rem;
+}
+.slideshow-nav.next {
+    right: 1rem;
+}
+/* Mở tệp /css/style.css */
+/* ================================================== */
+/* === CSS CHO HERO SLIDESHOW (CÓ HIỆU ỨNG) === */
+
+#hero-slideshow-container {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1920 / 700;
+    position: relative;
+    overflow: hidden;
+    background-color: #f0f0f0; 
+}
+
+#hero-slideshow-container .hero-slide {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* Mặc định ẩn tất cả các slide */
+    opacity: 0; 
+    /* Ẩn hẳn để không thể tương tác khi đang trong suốt */
+    visibility: hidden; 
+    /* Hiệu ứng chuyển động mờ dần */
+    transition: opacity 0.7s ease-in-out, visibility 0.7s; 
+}
+
+#hero-slideshow-container .hero-slide.slide-active {
+    /* Hiển thị slide đang được chọn */
+    opacity: 1; 
+    visibility: visible;
+    /* Đảm bảo slide active nằm trên các slide khác */
+    z-index: 10; 
+}
+
+#hero-slideshow-container .hero-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+/* ================================================== */

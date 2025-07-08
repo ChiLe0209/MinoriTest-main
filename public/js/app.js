@@ -1,8 +1,11 @@
+console.log('Bắt đầu chạy tệp app.js');
 document.addEventListener('DOMContentLoaded', () => {
     let currentPage = 1;
     let currentCategory = 'all';
     let currentSearch = '';
-
+    let currentSlideIndex = 0;
+    let slideInterval;
+    const heroSlideshowContainer = document.getElementById('hero-slideshow-container');
     const productGrid = document.getElementById('product-grid');
     const paginationControls = document.getElementById('pagination-controls');
     const categoryFilters = document.getElementById('category-filters');
@@ -19,6 +22,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const filtersSidebar = document.getElementById('filters-sidebar');
     const searchIconMobile = document.getElementById('search-icon-mobile');
     const searchCloseBtn = document.querySelector('.search-form .search-close-btn');
+    const saleBannerContainer = document.getElementById('sale-banner-container');
+ // === CÁC HÀM HIỂN THỊ (RENDER) ===
+
+    /**
+     * [MỚI] - Hàm để tải và hiển thị banner sale
+     */
+    async function renderSaleBanners() {
+        if (!saleBannerContainer) return;
+
+        try {
+            const response = await fetch('/api/sale-banners/active');
+            if (!response.ok) return;
+
+            const banners = await response.json();
+            if (banners && banners.length > 0) {
+                // Chỉ hiển thị banner mới nhất
+                const latestBanner = banners[0];
+                saleBannerContainer.innerHTML = `
+                    <div class="sale-banner-item container">
+                        <a href="${latestBanner.link || '#'}">
+                            <img src="${latestBanner.imageUrl}" alt="${latestBanner.title}">
+                        </a>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải banner sale:", error);
+        }
+    }
 
     function renderProducts(products) {
         if (!productGrid) return;
@@ -148,7 +180,70 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+ // HÃY CHẮC CHẮN BẠN ĐÃ THAY THẾ HÀM CŨ BẰNG PHIÊN BẢN NÀY
 
+// HÀM HIỂN THỊ MỘT SLIDE CỤ THỂ
+function showSlide(index) {
+    const slides = document.querySelectorAll('#hero-slideshow-container .hero-slide');
+    if (!slides || slides.length === 0) return;
+
+    // Cập nhật lại slide index để nó lặp lại khi đến cuối
+    currentSlideIndex = (index + slides.length) % slides.length;
+
+    // Ẩn tất cả các slide
+    slides.forEach(slide => {
+        slide.classList.remove('slide-active');
+    });
+
+    // Hiển thị slide được chọn
+    slides[currentSlideIndex].classList.add('slide-active');
+}
+
+// HÀM BẮT ĐẦU SLIDESHOW TỰ ĐỘNG
+function startSlideshow() {
+    // Dừng slideshow cũ lại (nếu có) để tránh chạy nhiều lần
+    clearInterval(slideInterval);
+    
+    // Cứ mỗi 5 giây, chuyển sang slide tiếp theo
+    slideInterval = setInterval(() => {
+        showSlide(currentSlideIndex + 1);
+    }, 5000); // 5000ms = 5 giây
+}
+function renderHeroSlideshow(banners) {
+    if (!heroSlideshowContainer) return;
+
+    heroSlideshowContainer.innerHTML = '';
+
+    if (!Array.isArray(banners) || banners.length === 0) {
+        // Có thể hiển thị một ảnh mặc định nếu không có banner
+        heroSlideshowContainer.innerHTML = `<a class="hero-slide slide-active"><img src="https://placehold.co/1920x700?text=Minori+Sport" alt="Default Banner"></a>`;
+        return;
+    }
+
+    banners.forEach(banner => {
+        const slide = document.createElement('a');
+        slide.href = banner.link || '#';
+        slide.className = 'hero-slide';
+
+        const img = document.createElement('img');
+        img.src = banner.imageUrl;
+        img.alt = banner.title;
+        img.loading = 'lazy';
+
+        slide.appendChild(img);
+        heroSlideshowContainer.appendChild(slide);
+    });
+
+    // SAU KHI TẠO XONG CÁC SLIDE
+    if (banners.length > 1) {
+        showSlide(0); // Hiển thị slide đầu tiên
+        startSlideshow(); // Bắt đầu tự động chuyển slide
+    } else {
+        // Nếu chỉ có 1 banner, hiển thị nó luôn và không cần chuyển động
+        const singleSlide = heroSlideshowContainer.querySelector('.hero-slide');
+        if (singleSlide) singleSlide.classList.add('slide-active');
+    }
+}
     function setupEventListeners() {
         menuIcon?.addEventListener('click', () => {
             mobileNavbar?.classList.toggle('open');
@@ -167,13 +262,20 @@ document.addEventListener('DOMContentLoaded', () => {
             searchForm?.classList.remove('open');
         });
 
-        searchForm?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            currentSearch = searchInput.value.trim();
-            currentCategory = 'all';
-            updateActiveFilterUI('all');
-            fetchAndRenderProducts(1);
-        });
+searchForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    currentSearch = searchInput.value.trim();
+    currentCategory = 'all';
+    updateActiveFilterUI('all');
+    fetchAndRenderProducts(1).then(() => {
+        const productSection = document.getElementById('products');
+        if (productSection) {
+            productSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+});
+
+
 
         const closeFilter = () => {
             filtersSidebar?.classList.remove('open');
@@ -225,18 +327,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    async function init() {
-        setupEventListeners();
-        try {
-            const categoriesResponse = await fetch('/api/categories');
-            if (!categoriesResponse.ok) throw new Error('Không thể tải danh mục');
-            const categories = await categoriesResponse.json();
+async function init() {
+    console.log('Hàm init() đã được gọi.'); // Kiểm tra xem hàm init có được gọi không
+    setupEventListeners(); 
+    try {
+        const [categoriesRes, bannersRes, productsRes] = await Promise.all([
+            fetch('/api/categories'),
+            fetch('/api/hero-banners/active'),
+            fetch('/api/products?page=1&limit=8')
+        ]);
+
+        console.log('Đã gửi xong các yêu cầu API.');
+
+        if (categoriesRes.ok) {
+            const categories = await categoriesRes.json();
+            console.log('Dữ liệu Categories nhận được:', categories); // KIỂM TRA DỮ LIỆU
             renderCategoryFilters(categories);
-            await fetchAndRenderProducts(1);
-        } catch (error) {
-            console.error("Lỗi khởi tạo:", error);
+        } else {
+            console.error('Lấy Categories thất bại. Status:', categoriesRes.status);
         }
+
+        if (bannersRes.ok) {
+            const banners = await bannersRes.json();
+            console.log('Dữ liệu Banners nhận được:', banners); // KIỂM TRA DỮ LIỆU
+            renderHeroSlideshow(banners);
+
+        } else {
+            console.error('Lấy Banners thất bại. Status:', bannersRes.status);
+        }
+        
+        if (productsRes.ok) {
+            const productData = await productsRes.json();
+            console.log('Dữ liệu Products nhận được:', productData); // KIỂM TRA DỮ LIỆU
+            renderProducts(productData.products);
+            renderPagination(productData.totalPages, productData.currentPage);
+        } else {
+            console.error('Lấy Products thất bại. Status:', productsRes.status);
+        }
+
+    } catch (error) {
+        console.error("Lỗi nghiêm trọng trong hàm init:", error);
     }
+}
     
     init();
 });

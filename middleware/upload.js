@@ -1,19 +1,18 @@
+// MinoriTest-main/middleware/upload.js
+
 const multer = require('multer');
 const path = require('path');
 
-// Cấu hình nơi lưu trữ và tên file
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/uploads/'); // Thư mục lưu file
-    },
-    filename: function (req, file, cb) {
-        // Tạo tên file mới để không bị trùng: fieldname-timestamp.extension
+// Hàm helper để tạo nơi lưu trữ file
+const createStorage = (folder) => multer.diskStorage({
+    destination: (req, file, cb) => cb(null, `public/${folder}/`),
+    filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
 });
 
-// Kiểm tra loại file, chỉ chấp nhận file ảnh
+// Hàm helper để lọc chỉ chấp nhận file ảnh
 const fileFilter = (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
         cb(null, true);
@@ -22,11 +21,25 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-const upload = multer({ 
-    storage: storage,
-    fileFilter: fileFilter,
-    limits: { fileSize: 1024 * 1024 * 5 } // Giới hạn kích thước file 5MB
-});
+// Middleware cho upload sản phẩm (có nhiều trường file)
+const productUpload = multer({
+    storage: createStorage('uploads'),
+    fileFilter,
+    limits: { fileSize: 1024 * 1024 * 5 } // 5MB
+}).fields([
+    { name: 'hinh_anh_bia', maxCount: 1 },
+    { name: 'variant_images', maxCount: 10 }
+]);
 
-// [QUAN TRỌNG] - Export trực tiếp biến 'upload'
-module.exports = upload;
+// Middleware cho upload hero banner (chỉ 1 file)
+const heroBannerUpload = multer({
+    storage: createStorage('uploads'),
+    fileFilter,
+    limits: { fileSize: 1024 * 1024 * 3 } // 3MB
+}).single('hero_image');
+
+// Export các middleware đã cấu hình để sử dụng ở các tệp routes khác
+module.exports = {
+    productUpload,
+    heroBannerUpload
+};

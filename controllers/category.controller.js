@@ -1,3 +1,5 @@
+// MinoriTest-main/controllers/category.controller.js
+
 const Category = require('../models/category.model');
 
 /**
@@ -5,7 +7,7 @@ const Category = require('../models/category.model');
  * @route   GET /api/categories
  * @access  Public
  */
-const getAllCategories = async (req, res) => {
+const getCategories = async (req, res) => {
     try {
         // Lấy tất cả danh mục và chuyển thành object thường để dễ thao tác
         const allCategories = await Category.find({}).lean(); 
@@ -21,46 +23,14 @@ const getAllCategories = async (req, res) => {
         // Xây dựng cây từ map
         allCategories.forEach(category => {
             // Nếu danh mục này có cha, hãy tìm cha của nó trong map và thêm nó vào mảng 'children' của cha
-            if (category.parent) {
-                if (categoryMap[category.parent]) {
-                   categoryMap[category.parent].children.push(categoryMap[category._id]);
-                }
+            if (category.parent && categoryMap[category.parent]) {
+                categoryMap[category.parent].children.push(categoryMap[category._id]);
             } else {
                 // Nếu không có cha, nó là một danh mục gốc, đưa vào cây chính
                 categoryTree.push(categoryMap[category._id]);
             }
         });
 
-        res.status(200).json(categoryTree);
-
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-const getCategories = async (req, res) => {
-    try {
-        const categories = await Category.find({});
-        
-        const buildCategoryTree = (categories, parentId = null) => {
-            const categoryTree = [];
-            categories.forEach(category => {
-                const parent = category.parent ? category.parent.toString() : null;
-                if (parent === parentId) {
-                    const children = buildCategoryTree(categories, category._id.toString());
-                    const categoryNode = {
-                        _id: category._id,
-                        name: category.name,
-                        slug: category.slug,
-                        parent: category.parent,
-                        children: children.length > 0 ? children : []
-                    };
-                    categoryTree.push(categoryNode);
-                }
-            });
-            return categoryTree;
-        };
-
-        const categoryTree = buildCategoryTree(categories);
         res.status(200).json(categoryTree);
 
     } catch (error) {
@@ -98,7 +68,7 @@ const getRootCategories = async (req, res) => {
 
 
 /**
- * @desc    Tạo một danh mục mới (bắt buộc có cha)
+ * @desc    Tạo một danh mục mới (có thể là danh mục gốc)
  * @route   POST /api/categories
  * @access  Admin
  */
@@ -106,12 +76,16 @@ const createCategory = async (req, res) => {
     try {
         const { name, slug, parent } = req.body;
         if (!name || !slug) { return res.status(400).json({ message: 'Vui lòng cung cấp đủ Tên hiển thị và Slug.' }); }
-        if (!parent) { return res.status(400).json({ message: 'Tất cả danh mục mới phải thuộc một danh mục cha.' }); }
+        
         const categoryExists = await Category.findOne({ $or: [{ name }, { slug }] });
         if (categoryExists) { return res.status(400).json({ message: 'Tên hoặc Slug của danh mục đã tồn tại.' }); }
-        const parentCategory = await Category.findById(parent);
-        if (!parentCategory) { return res.status(400).json({ message: 'Danh mục cha không hợp lệ.' }); }
-        const category = new Category({ name, slug, parent });
+
+        if (parent) {
+            const parentCategory = await Category.findById(parent);
+            if (!parentCategory) { return res.status(400).json({ message: 'Danh mục cha không hợp lệ.' }); }
+        }
+
+        const category = new Category({ name, slug, parent: parent || null });
         const createdCategory = await category.save();
         res.status(201).json(createdCategory);
     } catch (error) { res.status(500).json({ message: 'Lỗi server khi tạo danh mục', error: error.message }); }
@@ -125,17 +99,23 @@ const createCategory = async (req, res) => {
 const updateCategory = async (req, res) => {
     try {
         const { name, slug, parent } = req.body;
-        const categoryToUpdate = await Category.findById(req.params.id);
-        if (!categoryToUpdate) { return res.status(404).json({ message: 'Không tìm thấy danh mục.' }); }
-        if (categoryToUpdate.parent === null && parent) {
-             categoryToUpdate.name = name || categoryToUpdate.name;
-             categoryToUpdate.slug = slug || categoryToUpdate.slug;
-        } else {
-            categoryToUpdate.name = name || categoryToUpdate.name;
-            categoryToUpdate.slug = slug || categoryToUpdate.slug;
-            categoryToUpdate.parent = parent || categoryToUpdate.parent;
+        const categoryId = req.params.id;
+
+        if (categoryId === parent) { 
+            return res.status(400).json({ message: 'Một danh mục không thể là cha của chính nó.' }); 
         }
-        if (req.params.id === parent) { return res.status(400).json({ message: 'Một danh mục không thể là cha của chính nó.' }); }
+
+        const categoryToUpdate = await Category.findById(categoryId);
+        if (!categoryToUpdate) { return res.status(404).json({ message: 'Không tìm thấy danh mục.' }); }
+
+        categoryToUpdate.name = name || categoryToUpdate.name;
+        categoryToUpdate.slug = slug || categoryToUpdate.slug;
+        
+        // Cho phép cập nhật parent, bao gồm cả việc gán parent mới hoặc gỡ parent (set về null)
+        if (parent !== undefined) {
+            categoryToUpdate.parent = parent || null;
+        }
+
         const updatedCategory = await categoryToUpdate.save();
         res.status(200).json(updatedCategory);
     } catch (error) { res.status(500).json({ message: 'Lỗi server khi cập nhật danh mục', error: error.message }); }
@@ -150,10 +130,19 @@ const deleteCategory = async (req, res) => {
     try {
         const categoryId = req.params.id;
         const category = await Category.findById(categoryId);
+
         if (!category) { return res.status(404).json({ message: 'Không tìm thấy danh mục.' }); }
-        if (category.parent === null) { return res.status(400).json({ message: 'Không thể xóa danh mục gốc.' }); }
+        
+        // Giữ lại các biện pháp an toàn
+        if (category.parent === null) { return res.status(400).json({ message: 'Không thể xóa danh mục gốc. Hãy xóa các danh mục con trước.' }); }
+        
         const children = await Category.find({ parent: categoryId });
         if (children.length > 0) { return res.status(400).json({ message: 'Không thể xóa danh mục này vì còn danh mục con.' }); }
+
+        // Cải tiến trong tương lai: kiểm tra xem có sản phẩm nào thuộc danh mục này không trước khi xóa.
+        // const products = await Product.find({ danh_muc: category.slug });
+        // if (products.length > 0) { return res.status(400).json({ message: 'Không thể xóa danh mục vì còn sản phẩm.' }); }
+
         await Category.findByIdAndDelete(categoryId);
         res.status(200).json({ message: 'Danh mục đã được xóa.' });
     } catch (error) { res.status(500).json({ message: 'Lỗi server khi xóa danh mục', error: error.message }); }
@@ -161,7 +150,6 @@ const deleteCategory = async (req, res) => {
 
 
 module.exports = {
-    getAllCategories,
     getCategories,
     getCategoriesFlat,
     getRootCategories,

@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
     <link rel="stylesheet" href="/css/admin.css">
     <link rel="icon" type="image/png" href="/images/icon.jpg">
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/wir0oi585q8wov294nk8drppodwf3xmm20j882hzx467343t/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 <body>
 
@@ -29,6 +29,7 @@
                 <li class="active" data-content="dashboard-content"><a href="#"><i class="ri-dashboard-line"></i>Tổng quan</a></li>
                 <li data-content="products-content"><a href="#"><i class="ri-shopping-bag-3-line"></i>Sản phẩm</a></li>
                 <li data-content="categories-content"><a href="#"><i class="ri-folder-line"></i>Danh mục</a></li>
+                <li data-content="hero-banners-content"><a href="#"><i class="ri-image-line"></i>Hero Banner</a></li>
             </ul>
             <ul class="side-menu logout-section">
                 <li><a href="/" class="logout"><i class="ri-logout-circle-r-line"></i>Về trang bán hàng</a></li>
@@ -82,8 +83,65 @@
                         </div>
                     </div>
                 </div>
+                
+                <div id="hero-banners-content" class="main-content hidden">
+                    <div class="header">
+                        <div class="left"><h1>Quản lý Hero Banner</h1></div>
+                        <div class="right"><button id="add-hero-banner-btn" class="btn-add"><i class="ri-add-line"></i><span>Thêm mới</span></button></div>
+                    </div>
+                    <div class="table-data">
+                        <div class="order">
+                            <table>
+                                <thead><tr><th>Ảnh</th><th>Tiêu đề</th><th>Thứ tự</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+                                <tbody id="hero-banners-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </main>
         </section>
+    </div>
+
+    <div id="hero-banner-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <h3 id="hero-banner-modal-title">Thêm Hero Banner</h3>
+            <form id="hero-banner-form">
+                <input type="hidden" id="hero-banner-id">
+                <div class="form-grid" style="grid-template-columns: 1fr;">
+                    <div class="form-group">
+                        <label for="hero-banner-title">Tiêu đề</label>
+                        <input type="text" id="hero-banner-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hero-banner-link">Đường dẫn khi click</label>
+                        <input type="text" id="hero-banner-link">
+                    </div>
+                    <div class="form-group">
+                        <label for="hero-banner-order">Thứ tự</label>
+                        <input type="number" id="hero-banner-order" value="0">
+                    </div>
+                    <div class="form-group">
+            <label>Chọn ảnh banner (Kích thước đề xuất: 1920x800)</label>
+            <input type="file" id="hero-banner-image" style="display: none;" accept="image/*">
+            <div class="file-input-custom">
+                <button type="button" class="btn-choose-file" onclick="document.getElementById('hero-banner-image').click()">Chọn tệp</button>
+                <span id="hero-banner-filename-display" class="filename-display">Không có tệp nào được chọn</span>
+            </div>
+            <img class="image-preview" id="hero-banner-image-preview" src="#" alt="Xem trước"/>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="hero-banner-is-active" style="width: auto;" checked>
+            <label for="hero-banner-is-active">Kích hoạt?</label>
+        </div>
+                    <div class="form-group"></div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" data-close-modal="hero-banner-modal">Hủy</button>
+                    <button type="submit" class="btn-save">Lưu</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <div id="product-modal" class="modal">
@@ -98,14 +156,15 @@
                         <div class="form-group"><label for="product-ten-hang">Tên hàng</label><input type="text" id="product-ten-hang" required></div>
                         <div class="form-group"><label for="product-thuong-hieu">Thương hiệu</label><input type="text" id="product-thuong-hieu"></div>
                         <div class="form-group"><label for="product-danh-muc">Danh mục</label><select id="product-danh-muc" required></select></div>
-                        
                         <div class="form-group full-width">
                             <label for="product-hinh-anh-bia">Ảnh bìa (hiển thị ở trang chủ)</label>
                             <input type="file" id="product-hinh-anh-bia" class="image-input" accept="image/*">
                             <img class="image-preview" id="hinh-anh-bia-preview" src="#" alt="Xem trước ảnh bìa"/>
                         </div>
-                        
-                        <div class="form-group full-width"><label for="product-mo-ta">Mô tả chi tiết</label><textarea id="product-mo-ta"></textarea></div>
+                        <div class="form-group full-width">
+                            <label for="product-mo-ta">Mô tả chi tiết</label>
+                            <textarea id="product-mo-ta"></textarea>
+                        </div>
                     </div>
                 </div>
                 <div class="form-section">
@@ -120,7 +179,7 @@
             </form>
         </div>
     </div>
-
+    
     <div id="category-modal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
              <h3 id="category-modal-title">Thêm Danh mục Mới</h3>
@@ -138,6 +197,14 @@
              </form>
         </div>
     </div>
+    <script src="/js/tinymce/tinymce.min.js"></script>
+<script>
+  tinymce.init({
+    selector: 'textarea',
+    plugins: 'lists link image table code',
+    toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | code',
+  });
+</script>
 
     <script src="/js/admin.js"></script>
 </body>
